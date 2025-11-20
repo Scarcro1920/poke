@@ -88,7 +88,7 @@ const limiter = rateLimit({
   app.use(modules.express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
   app.use(modules.useragent.express());
   app.use(modules.express.json()); // for parsing application/json
-  app.enable("trust proxy");
+  app.set("trust proxy", 1)
   var toobusy = require("toobusy-js");
 
   const renderTemplate = async (res, req, template, data = {}) => {
