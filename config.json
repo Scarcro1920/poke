@@ -1,0 +1,7 @@
+{
+  "backend": "https://invidious.weblibre.org",
+  "port": 6003,
+  "max_results": 20,
+  "yt_dl_path": "/usr/bin/yt-dlp",
+  "language": "en"
+}
