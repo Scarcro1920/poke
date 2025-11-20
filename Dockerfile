@@ -6,16 +6,20 @@ COPY . /poketube
 ENV PORT=6003
 EXPOSE $PORT
 
-# Installer dépendances système fixes
+# Installer dépendances système + build tools
 RUN apt-get update && apt-get install -y \
     curl \
     gnupg \
     ca-certificates \
     python3 \
     python3-pip \
-    python3.11-distutils \
     build-essential \
+    make \
+    g++ \
  && rm -rf /var/lib/apt/lists/*
+
+# Installer setuptools (fournit distutils)
+RUN python3 -m pip install --upgrade pip setuptools wheel
 
 # Installer Node 18
 RUN mkdir -p /etc/apt/keyrings && \
@@ -26,7 +30,7 @@ RUN mkdir -p /etc/apt/keyrings && \
     apt-get update && apt-get install -y nodejs npm \
  && rm -rf /var/lib/apt/lists/*
 
-# Installer dépendances npm
+# Installer les dépendances npm
 RUN npm install --legacy-peer-deps
 
 # Lancer le serveur
