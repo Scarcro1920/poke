@@ -3,18 +3,24 @@
   "invapi": "https://invidious.weblibre.org/api/v1",
   "dislikes": "https://returnyoutubedislikeapi.com/votes?videoId=",
   "invchannel": "https://invidious.weblibre.org/api/v1",
+  
   "p_url": "https://redirect.invidious.io",
   "useragent": "PokeTube/2.0.0 (GNU/Linux; Android 14; Trisquel 11; poketube-vidious; like FreeTube)",
+
   "media_proxy": "https://iv.ggtyler.dev/api/v1",
   "videourl": "https://proxy.invidious.io",
+
   "email_main_url": "https://example.com",
   "mastodon_client_url": "https://example.com",
   "mastodon_client_server_name": "PokeSocial",
   "libreoffice_online_url": "https://example.com",
+
   "cacher_max_age": "86400",
   "enablealwayshttps": false,
   "proxylocation": "USA",
   "banner": "welcome to poke!",
+
   "t_url": "https://example.com/",
+
   "server_port": "6003"
 }
