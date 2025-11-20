@@ -1,20 +1,23 @@
 {
-    "tubeApi": "https://yewtu.be/api/",
-    "invapi": "https://invid-api.poketube.fun/bHj665PpYhUdPWuKPfZuQGoX/api/v1",
-    "dislikes": "https://returnyoutubedislikeapi.com/votes?videoId=",
-    "invchannel": "https://invid-api.poketube.fun/api/v1",
-    "p_url":"https://p.poketube.fun",
-    "useragent":"PokeTube/2.0.0 (GNU/Linux; Android 14; Trisquel 11; poketube-vidious; like FreeTube)",
-    "media_proxy": "https://image-proxy.poketube.fun",
-    "videourl":"https://eu-proxy.poketube.fun",
-    "email_main_url":"https://email-server.poketube.fun",
-    "mastodon_client_url":"https://social.poketube.fun",
-    "mastodon_client_server_name":"PokeSocial",
-    "libreoffice_online_url":"https://office.poketube.fun",
-    "cacher_max_age": "86400",
-    "enablealwayshttps": false,
-    "proxylocation":"USA",
-    "banner":"welcome to poke!",
-    "t_url": "https://t.poketube.fun/",
-    "server_port": "6003"
+  "server_port": 6003,
+  "instance_name": "Poketube",
+  "backend": {
+    "invidious_api": "https://invidious.weblibre.org",
+    "invidious_watch_endpoint": "/api/v1/videos/",
+    "invidious_search_endpoint": "/api/v1/search?q=",
+    "invidious_related_endpoint": "/api/v1/related/"
+  },
+  "branding": {
+    "site_title": "Poketube",
+    "site_description": "Private YouTube frontend"
+  },
+  "proxy": {
+    "enable_proxy": false,
+    "proxy_url": ""
+  },
+  "security": {
+    "rate_limit_window_ms": 60000,
+    "rate_limit_max": 100,
+    "trust_proxy": false
   }
+}
