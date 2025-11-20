@@ -1,14 +1,14 @@
 {
-  "tubeApi": "https://iv.ggtyler.dev/api/v1",
-  "invapi": "https://iv.ggtyler.dev/api/v1",
+  "tubeApi": "https://yewtu.be/api/v1",
+  "invapi": "https://yewtu.be/api/v1",
   "dislikes": "https://returnyoutubedislikeapi.com/votes?videoId=",
-  "invchannel": "https://iv.ggtyler.dev/api/v1",
+  "invchannel": "https://yewtu.be/api/v1",
 
-  "p_url": "https://redirect.invidious.io",
+  "p_url": "https://yewtu.be",
   "useragent": "PokeTube/2.0.0 (GNU/Linux; Android 14; Trisquel 11; poketube-vidious; like FreeTube)",
 
-  "media_proxy": "https://iv.ggtyler.dev/api/v1",
-  "videourl": "https://proxy.invidious.io",
+  "media_proxy": "https://yewtu.be/api/v1",
+  "videourl": "https://yewtu.be",
 
   "email_main_url": "https://example.com",
   "mastodon_client_url": "https://example.com",
