@@ -1,9 +1,9 @@
 {
-  "tubeApi": "https://invidious.weblibre.org/api/v1",
-  "invapi": "https://invidious.weblibre.org/api/v1",
+  "tubeApi": "https://iv.ggtyler.dev/api/v1",
+  "invapi": "https://iv.ggtyler.dev/api/v1",
   "dislikes": "https://returnyoutubedislikeapi.com/votes?videoId=",
-  "invchannel": "https://invidious.weblibre.org/api/v1",
-  
+  "invchannel": "https://iv.ggtyler.dev/api/v1",
+
   "p_url": "https://redirect.invidious.io",
   "useragent": "PokeTube/2.0.0 (GNU/Linux; Android 14; Trisquel 11; poketube-vidious; like FreeTube)",
 
@@ -21,6 +21,5 @@
   "banner": "welcome to poke!",
 
   "t_url": "https://example.com/",
-
   "server_port": "6003"
 }
