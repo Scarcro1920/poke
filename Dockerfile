@@ -1,33 +1,16 @@
-FROM debian:stable
+# Base Node 18 officielle (Debian Bullseye)
+FROM node:18-bullseye
 
+# Set working directory
 WORKDIR /poketube
 COPY . /poketube
 
+# Expose Render port
 ENV PORT=6003
 EXPOSE $PORT
 
-# Installer dépendances système + build tools
-RUN apt-get update && apt-get install -y \
-    curl \
-    gnupg \
-    ca-certificates \
-    python3 \
-    python3-pip \
-    build-essential \
-    make \
-    g++ \
- && rm -rf /var/lib/apt/lists/*
-
-# Installer setuptools (fournit distutils)
-RUN python3 -m pip install --upgrade pip setuptools wheel
-
-# Installer Node 18
-RUN mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
-      | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" \
-      > /etc/apt/sources.list.d/nodesource.list && \
-    apt-get update && apt-get install -y nodejs npm \
+# Installer build tools pour node-gyp
+RUN apt-get update && apt-get install -y build-essential python3 make g++ \
  && rm -rf /var/lib/apt/lists/*
 
 # Installer les dépendances npm
