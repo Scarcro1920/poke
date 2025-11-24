@@ -1,24 +1,26 @@
-/*
-
-    PokeTube is an Free/Libre youtube front-end. this is our main file.
-  
-    Copyright (C) 2021-2024 POKETUBE (https://codeberg.org/Ashley/poketube)
-    
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-    
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see https://www.gnu.org/licenses/.
-  */
+/* main server.js patché pour Render:
+   - force écoute sur process.env.PORT || config.server_port
+   - filtre les logs "Detected a new open port HTTP:..."
+   - toobusy.onLag ne kill plus le process
+*/
 
 (async function () {
+  // ---- début hack: filtrer certains logs (pour éviter le spam "Detected a new open port") ----
+  const _origConsoleLog = console.log;
+  console.log = function (...args) {
+    try {
+      const s = args.map(a => (typeof a === "string" ? a : JSON.stringify(a))).join(" ");
+      if (/Detected a new open port HTTP:\d+/.test(s)) {
+        // ignore this specific spammy message
+        return;
+      }
+    } catch (e) {
+      // noop
+    }
+    _origConsoleLog.apply(console, args);
+  };
+  // ---- fin hack de filtrage de log ----
+
   const {
     fetcher,
     core,
@@ -41,10 +43,9 @@
       console.error("Error reading the file:", err);
       return;
     }
-
-    // Log the ASCII art to the console
     console.log(data);
   });
+
   initlog("Loading...");
   initlog(
     "[Welcome] Welcome To Poke - The ultimate privacy app - :3 " +
@@ -75,12 +76,16 @@
   const sha384 = modules.hash;
   const rateLimit = require("express-rate-limit");
 
-const limiter = rateLimit({
+  const limiter = rateLimit({
     windowMs: 30 * 1000, // 30 second window
     max: 200, // limit each IP to 200 requests per 30 seconds
-});
+  });
 
   var app = modules.express();
+
+  // trust proxy pour Render / Docker (déjà présent)
+  app.set("trust proxy", 1);
+
   app.use(limiter);
   app.use(ieBlockMiddleware);
   initlog("Loaded express.js");
@@ -88,7 +93,7 @@ const limiter = rateLimit({
   app.use(modules.express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
   app.use(modules.useragent.express());
   app.use(modules.express.json()); // for parsing application/json
-  app.set("trust proxy", 1)
+
   var toobusy = require("toobusy-js");
 
   const renderTemplate = async (res, req, template, data = {}) => {
@@ -101,28 +106,33 @@ const limiter = rateLimit({
   // Set check interval to a faster value. This will catch more latency spikes
   // but may cause the check to be too sensitive.
   toobusy.interval(110);
-
   toobusy.maxLag(3500);
 
   app.use(function (req, res, next) {
     if (toobusy()) {
-      res.send(503, "I'm busy right now, sorry.");
+      res.status(503).send("I'm busy right now, sorry.");
     } else {
       next();
     }
   });
 
+  // remplacer le comportement destructeur (process.exit) par log + metric
   toobusy.onLag(function (currentLag) {
-    process.exit(1);
-    console.log("Event loop lag detected! Latency: " + currentLag + "ms");
+    console.error("Event loop lag detected! Latency: " + currentLag + "ms");
+    // on Render on laisse container supervisor gérer le restart si nécessaire
+    // ne pas process.exit(1) pour éviter boucle de crash/restart infinie
   });
 
-
   const initPokeTube = function () {
+    // Protection : s'il existe un mécanisme de scanning qui démarre depuis sinit,
+    // on peut définir un flag pour le désactiver si sinit le lit.
+    process.env.POKETUBE_DISABLE_PORT_SCAN = "1";
     sinit(app, config, renderTemplate);
     initlog("inited super init");
-    init(app);
-    initlog("inited app");
+    // forcer init avec le port de Render si présent
+    const PORT = process.env.PORT || config.server_port || 6003;
+    init(app, PORT);
+    initlog("inited app on port " + PORT);
   };
 
   try {
@@ -136,7 +146,7 @@ const limiter = rateLimit({
       }
       res.header("secure-poketube-instance", "1");
 
-      // opt out of googles "FLOC" bullcrap :p See https://spreadprivacy.com/block-floc-with-duckduckgo/
+      // opt out of googles "FLOC"
       res.header("Permissions-Policy", "interest-cohort=()");
       res.header("software-name", "poke");
       next();
@@ -154,12 +164,10 @@ const limiter = rateLimit({
           );
         }
       }
-
       next();
     });
 
     app.use(function (req, res, next) {
- 
       res.header(
         "X-PokeTube-Youtube-Client-Name",
         innertube.innertube.CONTEXT_CLIENT.INNERTUBE_CONTEXT_CLIENT_NAME
@@ -168,7 +176,7 @@ const limiter = rateLimit({
         "Hey-there",
         "Do u wanna help poke? contributions are welcome :3 https://codeberg.org/Ashley/poke"
       );
-     
+
       res.header(
         "X-PokeTube-Youtube-Client-Version",
         innertube.innertube.CLIENT.clientVersion
@@ -197,8 +205,9 @@ const limiter = rateLimit({
     });
 
     initlog("[OK] Load headers");
-  } catch {
+  } catch (e) {
     initlog("[FAILED] load headers");
+    console.error(e);
   }
 
   try {
@@ -207,9 +216,11 @@ const limiter = rateLimit({
     });
 
     initlog("[OK] Load robots.txt");
-  } catch {
+  } catch (e) {
     initlog("[FAILED] load robots.txt");
+    console.error(e);
   }
 
   initPokeTube();
 })();
+
