@@ -94,7 +94,7 @@
   app.use(modules.useragent.express());
   app.use(modules.express.json()); // for parsing application/json
 
-  var toobusy = require("toobusy-js");
+  //var toobusy = require("toobusy-js");
 
   const renderTemplate = async (res, req, template, data = {}) => {
     res.render(
@@ -105,8 +105,8 @@
 
   // Set check interval to a faster value. This will catch more latency spikes
   // but may cause the check to be too sensitive.
-  toobusy.interval(110);
-  toobusy.maxLag(3500);
+  //toobusy.interval(110);
+ // toobusy.maxLag(3500);
 
   app.use(function (req, res, next) {
     if (toobusy()) {
@@ -117,10 +117,7 @@
   });
 
   // remplacer le comportement destructeur (process.exit) par log + metric
-  toobusy.onLag(function (currentLag) {
-    console.error("Event loop lag detected! Latency: " + currentLag + "ms");
-    // on Render on laisse container supervisor gérer le restart si nécessaire
-    // ne pas process.exit(1) pour éviter boucle de crash/restart infinie
+//app.use(function(req,res,next){ if(toobusy()){ res.status(503).send("I'm busy");} else {next();} });
   });
 
   const initPokeTube = function () {
